@@ -24,8 +24,11 @@ namespace BlogEngine.Controllers
         // GET: Post
         public async Task<IActionResult> Index()
         {
+            string? username = (string) RouteData.Values["user"];
+            if(String.IsNullOrEmpty(username))
+                return RedirectToAction("Index", "Home");
             var applicationDbContext = _context.Post.Include(p => p.Author);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await applicationDbContext.Where(p => p.Author.UserName == username).ToListAsync());
         }
 
         // GET: Post/Details/5
