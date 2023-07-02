@@ -1,21 +1,28 @@
-﻿using System.Diagnostics;
+﻿using System.Net.Mime;
+using System.Security.AccessControl;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using BlogEngine.Models;
+using BlogEngine.Data;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace BlogEngine.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ApplicationDbContext _context;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ApplicationDbContext context)
     {
-        _logger = logger;
+        _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var applicationDbContext = _context.Post.Include(p => p.Author);
+        return View(await applicationDbContext.OrderByDescending(p => p.DatePublished).ToListAsync());
     }
 
     public IActionResult Privacy()

@@ -11,25 +11,30 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Bloggy</a>
+            <div class="container-fluid flex-column">
+                <div class="navbar-collapse col-12 d-flex justify-content-between">
+                <a class="navbar-brand px-2" asp-area="" asp-controller="Home" asp-action="Index">Bloggy</a>
+
+                <partial name="_LoginPartial" />
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                </div>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex align-self-start">
+                    <ul class="navbar-nav flex-grow-1 ">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link px-2" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark"  href="/posts/@User.Identity.Name">Posts</a>
+                           @* <a class="nav-link px-2"  href="/posts/@User.Identity.Name">Posts</a>*@
+                           <a class="nav-link px-2"  asp-controller="Post" asp-action="Index" asp-route-user="@User.Identity.Name">Posts</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link px-2" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
@@ -40,7 +45,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted mt-5">
         <div class="container">
             &copy; 2023 - Bloggy - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

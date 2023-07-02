@@ -22,6 +22,7 @@ namespace BlogEngine.Controllers
         }
 
         // GET: Post
+        [Route("{user}", Name="Post")]
         public async Task<IActionResult> Index()
         {
             string? username = (string) RouteData.Values["user"];

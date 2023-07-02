@@ -1,9 +1,35 @@
-﻿@{
+﻿@model IEnumerable<Post>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
+<div class="text-center " style="height:100vh; padding-top: 10%">
     <h1 class="display-4">Your cozy writing nook</h1>
     <p>Connect, Create, Blog</p>
-    <button class="btn btn-rounded bg-secondary text-dark">CREATE YOUR BLOG</button>
+    <a class="btn btn-round" asp-controller="Post" asp-action="Create" class="btn btn-rounded bg-secondary text-dark">CREATE A BLOG POST</a>
+</div>
+<div class="container">
+    <h1 class="display-5 mb-5">Recent Posts</h1>
+@foreach (var item in Model) {
+    <div class="row mb-5">
+        <div class="col-6">
+<h2><a asp-asp-controller="Home" asp-action="Index">@Html.DisplayFor(modelItem => item.Title)</a></h2>
+<div class="">
+<p>
+@{var body = item.Body.Split('.').First();}
+                @Html.DisplayFor(modelItem => @body)
+</p>
+
+<p><a asp-controller="Post" asp-action="Details" asp-route-id="@item.Id" class="more-link">Read More</a> </p>
+</div>
+</div>
+
+    <div class="col-6 ml-auto mt-5">
+    <p class="author">by <a asp-controller="Post" asp-action="Index" asp-route-user="@item.Author.UserName">@item.Author.UserName</a></p>
+    <p class="tags">In <a asp-controller="" asp-action="">@item.Tags</a></p>
+    <p class="date">On @item.DatePublished.ToLongDateString() </p>
+</div>
+</div>
+}
 </div>
