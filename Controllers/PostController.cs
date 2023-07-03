@@ -24,21 +24,17 @@ namespace BlogEngine.Controllers
         }
 
         // GET: Post
-        [Route("{user}", Name="Post")]
+        [Route("{user}")]
         public async Task<IActionResult> Index()
         {
-            // Redirect to Home page if user is not logged in
-            string? username = (string) RouteData.Values["user"];
-            if(!User.Identity.IsAuthenticated && username == "Post" )
+            // Redirect to Home page if the user is not logged in and not viewing any user's blog
+            string? UserName = (string) RouteData.Values["user"];
+            if(String.IsNullOrEmpty(UserName) || UserName == "Post" )
                 return RedirectToAction(nameof(Index), "Home");
 
-            /*
-            if(String.IsNullOrEmpty(username))
-                return RedirectToAction(nameof(Index), "Home");
-            */
-            ViewData["UserName"] = username;
+            ViewData["UserRoute"] = UserName;
             var applicationDbContext = _context.Post.Include(p => p.Author);
-            return View(await applicationDbContext.Where(p => p.Author.UserName == username)
+            return View(await applicationDbContext.Where(p => p.Author.UserName == UserName)
             .OrderByDescending(p => p.DatePublished).ToListAsync());
         }
 
@@ -109,12 +105,17 @@ namespace BlogEngine.Controllers
                 return NotFound();
             }
 
-            ViewData["AuthorId"] = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "Id", post.AuthorId);
+            var AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            if(AuthorId != post.AuthorId)
+                return RedirectToAction(nameof(Index), "Post", new{User = User.Identity.Name});
+
             // current date and time as both publish and modify date when creating a new post
             var dt = new DateTime(DateTime.Now.Ticks);
             ViewData["PublishedDate"] = post.DatePublished.ToString("yyyy-MM-ddTHH:mm");
             ViewData["ModifiedDate"] = dt.ToString("yyyy-MM-ddTHH:mm");
+            ViewData["AuthorId"] = AuthorId;
+
 
             return View(post);
         }
@@ -132,8 +133,15 @@ namespace BlogEngine.Controllers
                 return NotFound();
             }
 
+
             if (ModelState.IsValid)
             {
+
+            if(User.FindFirstValue(ClaimTypes.NameIdentifier) != post.AuthorId)
+                {
+                    return NotFound();
+                }
+
                 try
                 {
                     _context.Update(post);
@@ -166,6 +174,12 @@ namespace BlogEngine.Controllers
                 return NotFound();
             }
 
+            var AuthorId = _context.Post.Where(p => p.Id == id).Select(p => p.AuthorId).First();
+            var UserName = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+            if(UserName != AuthorId)
+                return RedirectToAction(nameof(Index), "Post", new{User = User.Identity.Name});
+
+
             var post = await _context.Post
                 .Include(p => p.Author)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -188,8 +202,16 @@ namespace BlogEngine.Controllers
                 return Problem("Entity set 'ApplicationDbContext.Post'  is null.");
             }
             var post = await _context.Post.FindAsync(id);
+
+            
             if (post != null)
             {
+                if (User.FindFirstValue(ClaimTypes.NameIdentifier) != post.AuthorId)
+                {
+                    return NotFound();
+                }
+
+
                 _context.Post.Remove(post);
             }
 

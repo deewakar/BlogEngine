@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BlogEngine.Data;
 using BlogEngine.Models;
+using Microsoft.Identity.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,15 +37,10 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "Post",
-    pattern: "posts/{user?}/{id?}",
-    defaults: new {controller="Post",action="Index"}
-    );
 
 app.MapRazorPages();
 
