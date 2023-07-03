@@ -6,10 +6,10 @@
 }
 
 <a class="btn btn-rounded text-primary" style="margin-left:80%" asp-action="Create">Create a new post</a>
-@if(User.Identity.IsAuthenticated){
-<h1>Your Posts</h1>
+@if(User.Identity.Name != @ViewBag.UserRoute){
+<h1> @ViewBag.UserRoute's Posts</h1>
 } else {
-<h1> @ViewBag.UserName's Posts</h1>
+<h1>Your Posts</h1>
 }
 
 
@@ -36,8 +36,10 @@
     <p class="tags">Tags: <a asp-controller="" asp-action="">@item.Tags</a></p>
     <p class="date">Date: @item.DatePublished.ToLongDateString() </p>
 
-                <p><a class="text-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a></p>
-                <p><a class="text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a></p> 
+    @if(User.Identity.Name == @ViewBag.UserRoute){
+        <p><a class="text-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a></p>
+        <p><a class="text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a></p> 
+    }
                 
 </div>
 </div>
