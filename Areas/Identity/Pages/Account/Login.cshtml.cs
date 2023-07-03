@@ -120,7 +120,7 @@ namespace BlogEngine.Areas.Identity.Pages.Account
                     _logger.LogInformation("User logged in.");
                     //var user = await _signInManager.UserManager.GetUserAsync(User);
                     string username = Input.Email ?? string.Empty;
-                    returnUrl = Url.Content($"~/posts/{username}");
+                    returnUrl = Url.Content($"~/{username}");
 
                     return LocalRedirect(returnUrl);
                 }
